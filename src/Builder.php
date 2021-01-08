@@ -605,7 +605,28 @@ class Builder {
             }
         }, array_filter(array_map('trim', explode("\r\n", $headerString)))));
 
-        return array_collapse($headers);
+        $results = array();
+
+        foreach( $headers as $values ) {
+            if( !is_array($values) ) {
+                continue;
+            }
+
+            $key = array_keys($values)[ 0 ];
+            if( isset($results[ $key ]) ) {
+                $results[ $key ] = array_merge(
+                    (array) $results[ $key ],
+                    array( array_values($values)[ 0 ] )
+                );
+            } else {
+                $results = array_merge(
+                    $results,
+                    $values
+                );
+            }
+        }
+
+        return $results;
     }
 
     /**
